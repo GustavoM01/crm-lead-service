@@ -34,7 +34,6 @@ public class LeadDTO {
     @Size(max = 43, message = "Exceeds maximum value of 43 characters. Please try again.")
     private String companyName;
 
-    @NotBlank
     private Long salesRepId;
 
 
