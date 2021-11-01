@@ -5,8 +5,10 @@ import com.ironhack.leadservice.dto.LeadDTO;
 import com.ironhack.leadservice.dto.SalesRepDTO;
 import com.ironhack.leadservice.proxies.SalesRepProxy;
 import com.ironhack.leadservice.repositories.LeadRepository;
+import feign.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -40,8 +42,9 @@ public class LeadService {
         return lead.orElse(null);
     }
 
-    public void delete(Long id) {
+    public ResponseEntity<Void> delete(Long id) {
         Optional<Lead> leadToDelete = repository.findById(id);
-        repository.delete(leadToDelete.get());
+        repository.deleteById(leadToDelete.get().getLeadId());
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
