@@ -39,4 +39,9 @@ public class LeadService {
         Optional<Lead> lead = repository.findById(id);
         return lead.orElse(null);
     }
+
+    public void delete(Long id) {
+        Optional<Lead> leadToDelete = repository.findById(id);
+        repository.delete(leadToDelete.get());
+    }
 }

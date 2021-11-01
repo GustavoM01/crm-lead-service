@@ -30,4 +30,7 @@ public class LeadController {
     public Lead create(@RequestBody @Valid LeadDTO leadDTO){
         return leadService.validateCreate(leadDTO);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteLead(@PathVariable Long id) { leadService.delete(id); }
 }
