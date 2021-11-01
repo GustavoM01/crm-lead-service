@@ -18,33 +18,37 @@ import java.util.Optional;
 @Service
 public class LeadService {
 
-    @Autowired
-    LeadRepository repository;
+  @Autowired
+  LeadRepository repository;
 
-    @Autowired
-    SalesRepProxy salesRepProxy;
+  @Autowired
+  SalesRepProxy salesRepProxy;
 
-    public List<Lead> getList(){
-        return repository.findAll();
+  public List<Lead> getList() {
+    return repository.findAll();
+  }
+
+  public Lead validateCreate(LeadDTO leadDTO) {
+    boolean salesRepExists = salesRepProxy.checkSalesRep(leadDTO.getSalesRepId());
+    if (salesRepExists) {
+      Lead lead = new Lead(leadDTO.getName(), leadDTO.getPhoneNumber(), leadDTO.getEmail(), leadDTO.getCompanyName(), leadDTO.getSalesRepId());
+      return repository.save(lead);
     }
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no sales rep by that id");
+  }
 
-    public Lead validateCreate(LeadDTO leadDTO){
-        boolean salesRepExists = salesRepProxy.checkSalesRep(leadDTO.getSalesRepId());
-        if (salesRepExists) {
-            Lead lead = new Lead(leadDTO.getName(), leadDTO.getPhoneNumber(), leadDTO.getEmail(), leadDTO.getCompanyName(), leadDTO.getSalesRepId());
-            return repository.save(lead);
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no sales rep by that id");
-    }
-
-    public Lead findLead(Long id){
-        Optional<Lead> lead = repository.findById(id);
-        return lead.orElse(null);
+  public Lead findLead(Long id) {
+    Optional<Lead> lead = repository.findById(id);
+    return lead.orElse(null);
     }
 
     public ResponseEntity<Void> delete(Long id) {
         Optional<Lead> leadToDelete = repository.findById(id);
         repository.deleteById(leadToDelete.get().getLeadId());
         return new ResponseEntity<Void>(HttpStatus.OK);
-    }
+  }
+
+  public List<Long[]> getCountLeadBySalesRep() {
+    return repository.getCountLeadBySalesRep();
+  }
 }
